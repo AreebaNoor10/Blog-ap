@@ -28,12 +28,9 @@ import {
   CardBody,
   CardFooter,
   Heading,
-  Text,
-  Textarea 
 } from "@chakra-ui/react";
 const steps = [
   { title: "Add Keyword", description: "Search Keyword" },
-  { title: "Blog Details", description: "Blogs Details" },
   { title: "Add/Edit Title", description: "Edit Blog Title and Content" },
   { title: "Preview & Save Blog", description: "Preview Blog" },
 ];
@@ -41,14 +38,7 @@ function Editor() {
   const isAuthenticated = useAuthentication();
   const [content, setContent] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [Keyword, setKeyword] = useState([]);
   const [title, setTitle] = useState("");
-  const [stitle, setsTitle] = useState([]);
-  const [Url, setUrl] = useState([]);
-  const [entity, setentity] = useState([]);
-  const [organization, setOrganization] = useState([]);
-  const [Dates, setDates] = useState([]);
-  const [Summary, setSummary] = useState("");
   const [status, setStatus] = useState("draft");
   const [activeStep, setActiveStep] = useState(0);
   const [isDraftSaved, setIsDraftSaved] = useState(false);
@@ -66,7 +56,7 @@ function Editor() {
   };
 
   const handleNext = async () => {
-    if (activeStep === 2) {
+    if (activeStep === 1) {
       const wordCount = content
         .split(/\s+/)
         .filter((word) => word !== "").length;
@@ -79,11 +69,7 @@ function Editor() {
       try {
         const token = localStorage.getItem("token");
         if (status === "draft" && draftId) {
-          await axios.delete(`http://localhost:8000/api/deleteBlog/${draftId}`,{
-            headers: {
-              Authorization: `Bearer ${token}`, // Include the token here
-            },
-          });
+          await axios.delete(`http://localhost:8000/api/deleteBlog/${draftId}`);
         }
       const response = await axios.post(
         "http://localhost:8000/api/saveBlog",
@@ -95,7 +81,7 @@ function Editor() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`, 
           },
         }
       );
@@ -118,13 +104,8 @@ function Editor() {
 
   const handleSearch = async () => {
     try {
-      const token = localStorage.getItem("token"); 
       const response = await axios.get(
-        `http://localhost:8000/api/search?keyword=${searchKeyword}`,{
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
-          },
-        }
+        `http://localhost:8000/api/search?keyword=${searchKeyword}`
       );
       const blogPosts = response.data
         .map((post) => post.content)
@@ -158,7 +139,7 @@ function Editor() {
       if (status === "draft" && draftId) {
         await axios.delete(`http://localhost:8000/api/deleteBlog/${draftId}`,{
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`, 
           },
         });
       }
@@ -170,7 +151,7 @@ function Editor() {
         image_url: imageUrl,
       },{
         headers: {
-          Authorization: `Bearer ${token}`, // Include the token here
+          Authorization: `Bearer ${token}`, 
         },
       });
 
@@ -188,24 +169,15 @@ function Editor() {
       toast.error("There was an error processing your request");
     }
   };
-
-  const handleDraft = async () => {
-    toast.success("Blog Saved as Draft");
-    setContent("");
-    setTitle("");
-    setImageUrl("");
-    setActiveStep(0);
-  };
-
   const Dropzone = () => {
     const onDrop = (acceptedFiles) => {
-      const file = acceptedFiles[0]; // Assuming only one file is allowed
+      const file = acceptedFiles[0]; 
       if (file) {
-        // Log the accepted file and its type for debugging
+       
         console.log("Accepted File:", file);
         console.log("File Type:", file.type);
 
-        // Check if the file type is an image (PNG or JPG)
+   
         if (!file.type.startsWith("image/")) {
           toast.error("Invalid file type. Please upload an image");
           return;
@@ -219,7 +191,7 @@ function Editor() {
     const { getRootProps, getInputProps } = useDropzone({
       onDrop,
       accept: "image/*",
-      multiple: false, // Allow only one file to be dropped
+      multiple: false, 
     });
 
     return (
@@ -306,90 +278,7 @@ function Editor() {
             </Card>
           </div>
         )}
-      {activeStep ===1 &&(
-                     <Card align="center" marginTop={10}>
-                     <Heading align="center" size="lg" mt={5}>
-                     Blog Suggestions
-                     </Heading>
-                     <CardBody width="50%">
-                     <Text fontSize='2xl'>Title</Text>
-                       <Input
-                         type="text"
-                         placeholder="Title1,Title2,Tile3,......."
-                         value={stitle}
-                         onChange={(event) => setsTitle(event.target.value)}
-                       />
-                        <Text fontSize='2xl'>URL</Text>
-                         <Input mt={2}
-                         type="url"
-                         placeholder="URL1,URL2,URL3,......."
-                         value={Url}
-                         onChange={(event) => setUrl(event.target.value)}
-                       />
-                          <Text fontSize='2xl'>SEO Keywords</Text>
-                         <Input mt={2}
-                         type="text"
-                         placeholder="Keyword1,Keyword2,Keyword3,......."
-                         value={Keyword}
-                         onChange={(event) => setKeyword(event.target.value)}
-                       />
-                       <Text fontSize='2xl'>Entities</Text>
-                         <Input mt={2}
-                         type="text"
-                         placeholder="Entity1,Entity2,Entity3,......."
-                         value={entity}
-                         onChange={(event) => setentity(event.target.value)}
-                       />
-                       <Text fontSize='2xl'>Organizations</Text>
-                         <Input mt={2}
-                         type="text"
-                         placeholder="org1,org2,org3,......."
-                         value={organization}
-                         onChange={(event) => setOrganization(event.target.value)}
-                       />
-                        <Text fontSize='2xl'>Dates</Text>
-                         <Input mt={2}
-                         type="date"
-                         placeholder="date1,date2,date3,......."
-                         value={Dates}
-                         onChange={(event) => setDates(event.target.value)}
-                       />
-                          <Text fontSize='2xl'>Summary</Text>
-                         <Textarea mt={2}
-                         type="date"
-                         placeholder="Summary of the Blog"
-                         value={Dates}
-                         onChange={(event) => setDates(event.target.value)}
-                       />
-                        <Stack
-              spacing={4}
-              direction="row"
-              align="left"
-              justifyContent="flex-end"
-            >
-              <Button
-                colorScheme="blue"
-                onClick={handleBack}
-                size="md"
-                className="search-button"
-                width="100%"
-              >
-                Back
-              </Button>
-              <Button
-                colorScheme="blue"
-                onClick={handleNext}
-                size="md"
-                className="search-button"
-                width="100%"
-              >
-                Next
-              </Button>
-            </Stack>
-                     </CardBody>
-                   </Card>
-      )}
-        {activeStep === 2 && (
+        {activeStep === 1 && (
           <div>
             <Card align="center" marginTop={10}>
               <Heading align="center" size="lg">
@@ -444,7 +333,7 @@ function Editor() {
           </div>
         )}
 
-        {activeStep === 3 && (
+        {activeStep === 2 && (
           <div className="editor" style={{ marginTop: "50px" }}>
             {isDraftSaved && (
               <>

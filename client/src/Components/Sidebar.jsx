@@ -33,9 +33,7 @@ const LinkItems = [
 const SidebarContent = ({ onClose, isMobile, ...rest }) => {
   const navigate = useNavigate();
   const handleLogout = () => {
-    // Remove the token from local storage
     localStorage.removeItem('token');
-    // Redirect to the login page or perform any other necessary actions
     navigate('/login');
   };
   return (

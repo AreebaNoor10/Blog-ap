@@ -1,7 +1,7 @@
 // FullBlogPage.js
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Grid, GridItem,Box} from '@chakra-ui/react'
+import { Grid, GridItem,Box,Heading} from '@chakra-ui/react'
 
 function FullBlogPage() {
   const location = useLocation();
@@ -12,8 +12,8 @@ function FullBlogPage() {
     <Grid templateColumns='repeat(5, 1fr)' gap={4}>
       <GridItem colSpan={1}  />
       <GridItem colStart={2} colEnd={5} >
-          <h1 className="blog-title">{title}</h1>
-          <div className="blog-content" dangerouslySetInnerHTML={{ __html: content }} />  
+          <Heading  textAlign='center'>{title}</Heading>
+          <Box className="blog-content" dangerouslySetInnerHTML={{ __html: content }} />  
       </GridItem>
       <GridItem colSpan={1}  />
     </Grid>

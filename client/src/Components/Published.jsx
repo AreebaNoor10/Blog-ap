@@ -11,11 +11,11 @@ function Published() {
     // Fetch all published blog posts when the component mounts
     async function fetchAllPublished() {
       try {
-        const token = localStorage.getItem("token"); // Get the JWT token from localStorage
+        const token = localStorage.getItem("token"); 
         console.log("Token:", token);
         const response = await axios.get("http://localhost:8000/api/published",{
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`, 
           },
         });
         setPublishedPosts(response.data);

@@ -2,7 +2,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Grid, GridItem,Box, Heading} from '@chakra-ui/react'
-import { LayoutGroup } from "framer-motion";
+
 
 function ShowFullBlogs() {
   const location = useLocation();

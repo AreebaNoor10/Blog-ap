@@ -70,7 +70,7 @@ export default function Register() {
       try {
         const response = await axios.post('http://localhost:8000/signup', values);
         console.log('Successful POST response:', response.data);
-        navigate('/');
+        navigate('/login');
       } catch (error) {
         console.log('Error during POST request:', error);
       }

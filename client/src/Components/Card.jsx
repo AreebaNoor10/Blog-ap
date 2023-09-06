@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
 import JoditEditor from "jodit-react";
 import { Button } from "@chakra-ui/react";
-import { Card, CardHeader, CardBody, CardFooter,Image,Heading,Text,Stack,Divider,ButtonGroup } from '@chakra-ui/react'
+import { Card,  CardBody, CardFooter,Image,Heading,Stack,Divider,ButtonGroup } from '@chakra-ui/react'
 import { useAuthentication } from '../Authentication/useAuthentication';
 
 function Card1({ id, title, content, status, onUpdate, onDelete ,image_url}) {
@@ -39,7 +39,7 @@ function Card1({ id, title, content, status, onUpdate, onDelete ,image_url}) {
           status: updatedStatus,
         },{
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -59,12 +59,7 @@ function Card1({ id, title, content, status, onUpdate, onDelete ,image_url}) {
 
   const handleDelete = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8000/api/deleteBlog/${id}`,{
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token here
-        },
-      }); 
+      await axios.delete(`http://localhost:8000/api/deleteBlog/${id}`); 
       onDelete(id);
     } catch (error) {
       console.error("Error deleting blog:", error);

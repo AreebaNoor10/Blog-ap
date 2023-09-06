@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { SimpleGrid } from '@chakra-ui/react'
-import { Box, TableContainer, Table, Tbody, Button, ButtonGroup } from '@chakra-ui/react'
+import { Img,Thead,Th,Td, Tr } from '@chakra-ui/react'
+import { Box, TableContainer, Table, Tbody, Button, ButtonGroup,Heading } from '@chakra-ui/react'
 import JoditEditor from "jodit-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,12 +15,12 @@ function Draft() {
     // Fetch all draft blog posts when the component mounts
     async function fetchAllDrafts() {
       try {
-        const token = localStorage.getItem("token"); // Get the JWT token from localStorage
+        const token = localStorage.getItem("token");
         console.log("Token:", token);
 
         const response = await axios.get("http://localhost:8000/api/allDrafts", {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token here
+            Authorization: `Bearer ${token}`,
           },
         });
         setDraftPosts(response.data); 
@@ -47,12 +47,7 @@ function Draft() {
 
   const handleDelete = async (id) => {
     try {
-      const token = localStorage.getItem("token"); 
-      await axios.delete(`http://localhost:8000/api/deleteBlog/${id}`,{
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token here
-        },
-      });
+      await axios.delete(`http://localhost:8000/api/deleteBlog/${id}`);
       // Remove the specific draft blog post from the state
       setDraftPosts((prevDraftPosts) =>
         prevDraftPosts.filter((post) => post.id !== id)
@@ -70,16 +65,11 @@ function Draft() {
       return;
     }
     try {
-      const token = localStorage.getItem("token");
       // Update the status to "publish" and send the update to the server
       const updatedStatus = "publish";
       const response = await axios.put(`http://localhost:8000/api/editBlog/${id}`, {
         content: editedContent,
         status: updatedStatus,
-      },{
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token here
-        },
       });
       handleUpdate(id, response.data.content, updatedStatus);
       console.log("Content saved as publish:", response.data);
@@ -101,22 +91,28 @@ function Draft() {
   };
 
   return isAuthenticated &&(
-    <div>
-      <div className="heading">
-        <h1>Draft Posts</h1>
-      </div>
+    <Box ml={{ base: 0, md: 60 }} p="4">
+      
+        <Heading size='lg' textAlign='center'>Draft Posts</Heading>
       <TableContainer>
         <Table variant="simple">
+        <Thead>
+      <Tr>
+        <Th>Image</Th>
+        <Th>Title</Th>
+        <Th>Actions</Th>
+      </Tr>
+    </Thead>
           <Tbody>
             {draftPosts.map((post) => (
-              <tr key={post.id}>
-                <td>
-                  <img src={post.image_url} alt="image" width="80%" />
-                </td>
-                <td>
-                  <h1>{post.title}</h1>
-                </td>
-                <td>
+              <Tr key={post.id}>
+                <Td>
+                  <Img src={post.image_url} alt="image" width="100%"/>
+                </Td>
+                <Td>
+                  <Heading size='md'>{post.title}</Heading>
+                </Td>
+                <Td>
                   {editingPost === post.id ? (
                     // Editing mode
                     <>
@@ -169,14 +165,14 @@ function Draft() {
                       </ButtonGroup>
                     </>
                   )}
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             ))}
           </Tbody>
         </Table>
       </TableContainer>
       <ToastContainer position="bottom-right" />
-    </div>
+    </Box>
   );
 }
 

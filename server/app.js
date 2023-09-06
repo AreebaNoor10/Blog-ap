@@ -12,11 +12,11 @@ app.use(bodyParser.json({ limit: "10mb" }));
 app.use(cors());
 
 const pool = new Pool({
-  user: "postgres",
-  password: "aree456#",
+  user: adduser,
+  password: addpassword,
   host: "localhost",
   port: 5432,
-  database: "blog-app",
+  database: adddatabasename,
 });
 
 const secretKey = "jwtSecretKey";
@@ -27,7 +27,7 @@ function generateRefreshToken(user) {
     userId: user.id,
   };
   const options = {
-    expiresIn: "30d", // You can adjust the expiration time for refresh tokens
+    expiresIn: "30d",
   };
   return jwt.sign(payload, refreshTokenSecretKey, options);
 }
@@ -120,8 +120,6 @@ app.post("/token/refresh", (req, res) => {
       return res.status(403).json({ message: "Invalid refresh token" });
     }
 
-    // You can also check if the user still exists in your database here
-
     const token = generateToken(user);
     return res.json({ token });
   });
@@ -137,14 +135,12 @@ app.get("/api/allBlogs", async (req, res) => {
     res.status(500).json({ error: "Error fetching all blogs" });
   }
 });
-app.use(verifyToken)
 
-app.post("/api/saveBlog", async (req, res) => {
+
+app.post("/api/saveBlog",verifyToken, async (req, res) => {
     try {
       const { title, content, status, image_url } = req.body;
-      const authorId = req.user.userId; // Assuming you have the user's ID in the token
-  
-      // Insert the new blog post into the database, including the author's ID
+      const authorId = req.user.userId;
       const query =
         "INSERT INTO blogs (title, content, status, image_url, author_id) VALUES ($1, $2, $3, $4, $5) RETURNING *";
       const values = [title, content, status, image_url, authorId];
@@ -177,9 +173,9 @@ app.put("/api/editBlog/:id", async (req, res) => {
 
 
 
-app.get("/api/allDrafts", async (req, res) => {
+app.get("/api/allDrafts",verifyToken, async (req, res) => {
   try {
-    const { userId } = req.user; // Assuming you have the user's ID in the token
+    const { userId } = req.user; 
     const query = "SELECT * FROM blogs WHERE status = 'draft' AND author_id = $1";
     const values = [userId];
 
@@ -192,9 +188,9 @@ app.get("/api/allDrafts", async (req, res) => {
 });
 
 // Fetch published blog posts for the current user
-app.get("/api/published", async (req, res) => {
+app.get("/api/published",verifyToken, async (req, res) => {
   try {
-    const { userId } = req.user; // Assuming you have the user's ID in the token
+    const { userId } = req.user; 
     const query = "SELECT * FROM blogs WHERE status = 'publish' AND author_id = $1";
     const values = [userId];
 
